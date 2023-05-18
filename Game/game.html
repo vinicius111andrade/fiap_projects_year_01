@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="utf-8"/>
+	<title>Código 11- Inserção do Placar</title>
+	</head>
+<body>
+<canvas id="minha-tela" width="800" height="400" style="border: #F00 solid 1px;"> </canvas>  
+<script type="text/javascript">
+		
+	var canvas = document.getElementById("minha-tela");
+	var context = canvas.getContext("2d");
+	context.font = "20px Arial";
+	
+	//obtendo o valor do momento em que o jogo é iniciado
+	var tInicial = new Date().getTime();
+    var intervalo, tAtual;
+	requestAnimationFrame(gameloop);
+
+    var x = 0
+    var y = 150;
+
+	
+		
+    window.onkeydown = pressionaTecla; 
+    function pressionaTecla(tecla){
+        if(tecla.keyCode == 38  ) {
+        y = y - 5; //diminuir y tem o efeito de subida
+        }
+        if(tecla.keyCode == 40  ) {
+        y = y + 5; //aumentar y tem o efeito de descer
+        }
+        if(tecla.keyCode == 39  ) {
+        x = x + 5; //aumentar o x tem o efeito de ir para a direita
+        }
+        if(tecla.keyCode == 37  ) {
+        x = x - 5; //diminuir o x tem o efeito de ir para a esquerda
+        }	
+    }
+		
+    
+	 function gameloop()
+     {
+		tAtual = new Date().getTime();
+        intervalo = Math.floor((tAtual - tInicial)/1000);
+		pontos(intervalo);	
+		console.log(intervalo);
+
+		if(intervalo<1000) requestAnimationFrame(gameloop);
+		else {
+			context.font = "40px Helvetica";
+			context.fillStyle = "green";
+			context.fillText("GAME OVER",canvas.width/2-150,canvas.height/2);
+		}
+     }
+     
+    function pontos(x) {
+        context.clearRect(0,0,canvas.width,canvas.height);
+        context.strokeText('PONTOS: '+ x,canvas.width-150,canvas.height-10);
+    
+	}  
+
+ </script>
+</body>
+</html>
+
+
+
+

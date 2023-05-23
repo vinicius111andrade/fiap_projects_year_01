@@ -9,56 +9,124 @@
 <script type="text/javascript">
 		
 	var canvas = document.getElementById("minha-tela");
-	var context = canvas.getContext("2d");
-	context.font = "20px Arial";
+	var placar = canvas.getContext("2d");
+	placar.font = "20px Arial";
+    var inimigo = canvas.getContext('2d');
+    var nave = canvas.getContext('2d');
+    var ctx = canvas.getContext('2d');
 	
 	//obtendo o valor do momento em que o jogo é iniciado
 	var tInicial = new Date().getTime();
     var intervalo, tAtual;
-	requestAnimationFrame(gameloop);
-
+    
+    //obtendo local do placar
     var x = 0
     var y = 150;
 
-	
+    //definir o ínicio do meteoro
+    var xInimigo = 0;
+    var yinimigo = 150;
+    var larguraInimigo = 50;
+    var alturaInimigo = 50;
+    
+    //definir o ínicio da nave
+    var xNave = 600;
+    var yNave = 150;
+    var larguraNave = 50;
+    var alturaNave = 50;
+
+	base_image = new Image();
+    base_image.src = 'Imagens/cima.png';
+
+    requestAnimationFrame(gameloop);
 		
+
     window.onkeydown = pressionaTecla; 
     function pressionaTecla(tecla){
         if(tecla.keyCode == 38  ) {
-        y = y - 5; //diminuir y tem o efeito de subida
+        yNave = yNave - 10; //diminuir y tem o efeito de subida
         }
         if(tecla.keyCode == 40  ) {
-        y = y + 5; //aumentar y tem o efeito de descer
+        yNave = yNave + 10; //aumentar y tem o efeito de descer
         }
         if(tecla.keyCode == 39  ) {
-        x = x + 5; //aumentar o x tem o efeito de ir para a direita
+        xNave = xNave + 10; //aumentar o x tem o efeito de ir para a direita
         }
         if(tecla.keyCode == 37  ) {
-        x = x - 5; //diminuir o x tem o efeito de ir para a esquerda
+        xNave = xNave - 10; //diminuir o x tem o efeito de ir para a esquerda
         }	
     }
 		
     
 	 function gameloop()
      {
-		tAtual = new Date().getTime();
+         
+        tAtual = new Date().getTime();
         intervalo = Math.floor((tAtual - tInicial)/1000);
-		pontos(intervalo);	
-		console.log(intervalo);
+        pontos(intervalo);	
+        console.log(intervalo);
 
-		if(intervalo<1000) requestAnimationFrame(gameloop);
+        desenharNave(xNave,yNave, larguraNave, alturaNave);
+
+
+        desenharQuadrado(xInimigo,yinimigo, larguraInimigo, alturaInimigo); 
+        
+        xInimigo = xInimigo + 10;
+
+		if(intervalo<1000) detectarColisao();
 		else {
-			context.font = "40px Helvetica";
-			context.fillStyle = "green";
-			context.fillText("GAME OVER",canvas.width/2-150,canvas.height/2);
+			placar.font = "40px Helvetica";
+			placar.fillStyle = "green";
+			placar.fillText("GAME OVER",canvas.width/2-150,canvas.height/2);
 		}
      }
      
     function pontos(x) {
-        context.clearRect(0,0,canvas.width,canvas.height);
-        context.strokeText('PONTOS: '+ x,canvas.width-150,canvas.height-10);
+        placar.clearRect(0,0,canvas.width,canvas.height);
+        placar.strokeText('PONTOS: '+ x,canvas.width-150,canvas.height-10);
     
 	}  
+
+    function desenharQuadrado(pX,pY,pLargura,pAltura) {
+			 //antes de fazer o desenho é preciso limpar o canvas
+            inimigo.fillStyle = '#00F';
+            if (xInimigo>=700) 
+            {
+                yinimigo = Math.floor((Math.random() * canvas.height));
+                xInimigo = 0;
+
+                inimigo.fillRect(xInimigo, yinimigo, pLargura, pAltura);
+            }
+            else
+            {
+                inimigo.fillRect(pX, pY, pLargura, pAltura);
+            }
+		}
+
+    function desenharNave(nX,nY,nLargura,nAltura) {
+        //ctx.clearRect(0, 0, 800, 400); antes de fazer o desenho é preciso limpar o canvas
+        nave.fillStyle = '#00F';
+        nave.fillRect(nX, nY, nLargura, nAltura);
+        // base_image.onload = function(){
+        // nave.drawImage(base_image, nX, nY, nLargura, nAltura);
+        // }
+    }
+
+    function detectarColisao()
+     {
+         if( ( (xInimigo + larguraInimigo) >  xNave && xInimigo < (xNave + 
+    larguraNave) ) && ( (yinimigo + alturaInimigo) > yNave && yinimigo < (yNave + alturaNave) 
+        ) ){
+          //interrompe o game loop parando a movimentação dos quadrados
+            placar.font = "40px Helvetica";
+			placar.fillStyle = "green";
+			placar.fillText("GAME OVER",canvas.width/2-150,canvas.height/2);
+         }
+		 else {
+			//chama novamente o ciclo da animação
+			requestAnimationFrame(gameloop);
+		 }
+     }
 
  </script>
 </body>
